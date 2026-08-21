@@ -26,5 +26,5 @@ I am a Master's graduate in Computer Science with experience in crowdtesting. I 
 * **Goal:** Showcasing an understanding of modern web application architecture and relational databases (SQL). *Note: The source code uses Polish naming conventions due to specific academic requirements.*
 
 ## Contact
-* **LinkedIn:** linkedin.com/in/rafal-wronowski
+* **LinkedIn:** [linkedin.com/in/rafal-wronowski](https://www.linkedin.com/in/rafal-wronowski)
 * **Email:** raf.wro42@gmail.com
