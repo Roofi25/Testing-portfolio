@@ -1,0 +1,1692 @@
+{
+  "info": {
+    "_postman_id": "850f837a-329a-4ff6-835c-935fdfe1ed07",
+    "name": "Trello API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "37223493"
+  },
+  "item": [
+    {
+      "name": "Create board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//three things to test:\r",
+              "//1 - status code\r",
+              "//2 - response time\r",
+              "//3 - body of the response (data in json)\r",
+              "\r",
+              "//Creating a collection variable that will contain the id of the \r",
+              "//created board (used in Delete board)\r",
+              "let responseData = pm.response.json();\r",
+              "pm.collectionVariables.set(\"boardId\", responseData.id);;\r",
+              "pm.collectionVariables.set(\"organizationId\", responseData.idOrganization);\r",
+              "\r",
+              "//Status code\r",
+              "pm.test(\"Create board -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedBoardName = decodeURIComponent(queryParams[\"name\"]);\r",
+              "\r",
+              "//Name in response body\r",
+              "pm.test(\"Create board -> Board name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(expectedBoardName);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create board -> Content-type is application json\", function()\r",
+              "{\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\")\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create board -> Response has parameter id\", function()\r",
+              "{\r",
+              "    pm.expect(responseData).to.have.property(\"id\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create board -> Board is not closed by a default\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.closed).to.eql(false);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create board -> Board's parameter 'permissionLevel' is set to private by default\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.prefs.permissionLevel).to.eql(\"private\")\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/1/boards/?name=test table&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            ""
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "test table"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create list",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let responseData = pm.response.json()\r",
+              "pm.collectionVariables.set(\"listId\", responseData.id);\r",
+              "pm.collectionVariables.set(\"listName\", responseData.name);\r",
+              "\r",
+              "//Status code\r",
+              "pm.test(\"Create list -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedListName = decodeURIComponent(queryParams[\"name\"])\r",
+              "//Name in response body\r",
+              "pm.test(\"Create list -> List name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(expectedListName);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create list -> Content-type is application json\", function()\r",
+              "{\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\")\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create list -> Response has a parameter id\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"id\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create list -> List is not closed by default\", function(){\r",
+              "    pm.expect(responseData.closed).to.eql(false);\r",
+              "})\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Create list -> List is created in a correct board\", function(){\r",
+              "    pm.expect(responseData.idBoard).to.eql(boardId);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/boards/{{boardId}}/lists?name=test list&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{boardId}}",
+            "lists"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "test list"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create card",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//card id\r",
+              "let responseData = pm.response.json();\r",
+              "pm.collectionVariables.set(\"cardId\",responseData.id);\r",
+              "pm.collectionVariables.set(\"cardName\",responseData.name);\r",
+              "\r",
+              "//Status code\r",
+              "pm.test(\"Create card -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedCardName = decodeURIComponent(queryParams[\"name\"]);\r",
+              "//Name in response body\r",
+              "pm.test(\"Create card -> Card name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(expectedCardName)\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create card -> Content type is application json\", function(){\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\")\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create card -> Resposnse has a parameter id\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"id\");\r",
+              "});\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Create card -> Card is created in a correct board\", function(){\r",
+              "    pm.expect(responseData.idBoard).to.eql(boardId);\r",
+              "});\r",
+              "\r",
+              "let listId = pm.collectionVariables.get(\"listId\");\r",
+              "pm.test(\"Create card -> Card is created in a correct list\", function(){\r",
+              "    pm.expect(responseData.idList).to.eql(listId);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create card -> Card is not closed by default\", function(){\r",
+              "    pm.expect(responseData.closed).to.eql(false);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create card -> Card has 0 attachments\", function(){\r",
+              "    pm.expect(responseData.badges.attachments).to.eql(0);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/cards?name=test card&idList={{listId}}&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "cards"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "test card"
+            },
+            {
+              "key": "idList",
+              "value": "{{listId}}"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Update board -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedBoardName = decodeURIComponent(queryParams[\"name\"]);\r",
+              "\r",
+              "pm.test(\"Update board -> Board name is correct\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.name).to.eql(expectedBoardName);\r",
+              "});\r",
+              "//Will be checked in get board method\r",
+              "pm.collectionVariables.set(\"boardName\", expectedBoardName);\r",
+              "\r",
+              "pm.test(\"Update board -> Content-type is application json\", function()\r",
+              "{\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\")\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Update board -> Response url has 'https;//trello.com' in it\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.url).to.contain(\"https://trello.com\");\r",
+              "});\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Update board -> Response's 'id' parameter has a correct value\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.id).to.eql(boardId);\r",
+              "})\r",
+              "\r",
+              "let organizationId = pm.collectionVariables.get(\"organizationId\");\r",
+              "pm.test(\"Update board -> Response's 'idOrganization' parameter has correct value\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.idOrganization).to.eql(organizationId);\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/boards/{{boardId}}?name=test table updated&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{boardId}}"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "test table updated"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update list",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Update list -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedListName = decodeURIComponent(queryParams[\"name\"]);\r",
+              "\r",
+              "pm.test(\"Update list -> List name is correct\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.name).to.eql(expectedListName);\r",
+              "});\r",
+              "//Will be checked in get list method\r",
+              "pm.collectionVariables.set(\"listName\", expectedListName);\r",
+              "\r",
+              "pm.test(\"Update list -> Content-type is application json\", function()\r",
+              "{\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\")\r",
+              "});\r",
+              "\r",
+              "let listId = pm.collectionVariables.get(\"listId\");\r",
+              "pm.test(\"Update list -> Response's 'id' parameter has a correct value\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.id).to.eql(listId);\r",
+              "});\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Update list -> Response's 'idBoard' parameter has a correct value\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.idBoard).to.eql(boardId);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Update list -> Response has parameter 'id'\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"id\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/lists/{{listId}}?name=test list updated&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{listId}}"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "test list updated"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update card",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Update card -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedCardName = decodeURIComponent(queryParams[\"name\"]);\r",
+              "\r",
+              "pm.test(\"Update card -> Card name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(expectedCardName);\r",
+              "});\r",
+              "//Will be checked in get card method\r",
+              "pm.collectionVariables.set(\"cardName\", expectedCardName);\r",
+              "\r",
+              "pm.test(\"Update card -> Content-type is application json\", function(){\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+              "});\r",
+              "\r",
+              "let cardId = pm.collectionVariables.get(\"cardId\");\r",
+              "pm.test(\"Update card -> Response's 'id' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.id).to.eql(cardId);\r",
+              "});\r",
+              "\r",
+              "let listId = pm.collectionVariables.get(\"listId\");\r",
+              "pm.test(\"Update card -> Response's 'idList' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.idList).to.eql(listId);\r",
+              "});\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Update card -> Response's 'idBoard' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.idBoard).to.eql(boardId);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Update card -> Response url has 'https;//trello.com' in it\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.url).to.contain(\"https://trello.com\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/cards/{{cardId}}?name=test card updated&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "{{cardId}}"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "test card updated"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Get board -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Get board -> Board id is correct\", function()\r",
+              "{\r",
+              "    pm.expect(responseData.id).to.eql(boardId);\r",
+              "});\r",
+              "\r",
+              "let boardName = pm.collectionVariables.get(\"boardName\");\r",
+              "pm.test(\"Get board -> Board name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(boardName);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Get board -> Response url has 'https;//trello.com' in it\", function(){\r",
+              "    pm.expect(responseData.url).to.contain(\"https://trello.com\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Get board -> Content-type is application json\", function(){\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/boards/{{boardId}}?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{boardId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get list",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Get list -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Get list -> Content type is application json\", function(){\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+              "});\r",
+              "\r",
+              "let listId = pm.collectionVariables.get(\"listId\");\r",
+              "pm.test(\"Get list -> Response's 'id' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.id).to.eql(listId);\r",
+              "});\r",
+              "\r",
+              "let listName = pm.collectionVariables.get(\"listName\");\r",
+              "pm.test(\"Get list -> Response's parameter 'name' has a correct value\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(listName);\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/lists/{{listId}}?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{listId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get card",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Get card -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Get card -> Content type is application json\", function(){\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+              "});\r",
+              "\r",
+              "let cardId = pm.collectionVariables.get(\"cardId\");\r",
+              "pm.test(\"Get card -> Response's 'id' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.id).to.eql(cardId);\r",
+              "});\r",
+              "\r",
+              "let cardName = pm.collectionVariables.get(\"cardName\");\r",
+              "pm.test(\"Get card -> Response's 'name' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(cardName);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Get card -> Response url has 'https://trello.com' in it\", function(){\r",
+              "    pm.expect(responseData.url).to.contain(\"https://trello.com\");\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/cards/{{cardId}}?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "{{cardId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create checklist",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let responseData = pm.response.json();\r",
+              "pm.collectionVariables.set(\"checklistId\", responseData.id);\r",
+              "\r",
+              "//Status code\r",
+              "pm.test(\"Create checklist -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedChecklistName = decodeURIComponent(queryParams[\"name\"])\r",
+              "//Name in response body\r",
+              "pm.test(\"Create checklist -> Checklist name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(expectedChecklistName);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create checklist -> Content type is application json\", function(){\r",
+              "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create checklist -> Respone has a paremeter id\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"id\");\r",
+              "});\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Create checklist -> Response's 'idBoard' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.idBoard).to.eql(boardId);\r",
+              "});\r",
+              "\r",
+              "let cardId = pm.collectionVariables.get(\"cardId\");\r",
+              "pm.test(\"Create checklist -> Response's 'idCard' parameter has a correct value\", function () {\r",
+              "    pm.expect(responseData.idCard).to.eql(cardId);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Create checklist -> Checklist have no items\", function(){\r",
+              "    pm.expect(responseData.checkItems).to.be.empty;\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/checklists?idCard={{cardId}}&name=test checklist&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "checklists"
+          ],
+          "query": [
+            {
+              "key": "idCard",
+              "value": "{{cardId}}"
+            },
+            {
+              "key": "name",
+              "value": "test checklist"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update checklist",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Update checklist -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "//We can retrieve query parameter \"name\". By doing this \r",
+              "//the DRY principle is respected and if we are gonna change \r",
+              "//the value of this query parameter we will not need to \r",
+              "//change all of the test cases. We need to decodeURIComponent\r",
+              "//in case when the name has spaces in it. Without it the \r",
+              "//test case will fail because the name parameter would have \r",
+              "//value \"example%20name\" instead of \"example name\".\r",
+              "let queryParams = pm.request.url.query.toObject();\r",
+              "let expectedChecklistName = decodeURIComponent(queryParams[\"name\"]);\r",
+              "//Name in response body\r",
+              "pm.test(\"Update checklist -> Checklist name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(expectedChecklistName);\r",
+              "});\r",
+              "//Will be checked in get checklist method\r",
+              "pm.collectionVariables.set(\"checklistName\", expectedChecklistName);\r",
+              "\r",
+              "pm.test(\"Update checklist -> Content type is application json\", function(){\r",
+              "   pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\") \r",
+              "});\r",
+              "\r",
+              "pm.test(\"Update checklist -> Respone has a paremeter id\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"id\");\r",
+              "});\r",
+              "\r",
+              "let checklistId = pm.collectionVariables.get(\"checklistId\");\r",
+              "pm.test(\"Update checklist -> Response's 'id' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.id).to.eql(checklistId);\r",
+              "});\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Update checklist -> Response's 'idBoard' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.idBoard).to.eql(boardId);\r",
+              "});\r",
+              "\r",
+              "let cardId = pm.collectionVariables.get(\"cardId\");\r",
+              "pm.test(\"Update checklist -> Response's 'idCard' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.idCard).to.eql(cardId);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/checklist/{{checklistId}}?name=test checklist updated&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "checklist",
+            "{{checklistId}}"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "test checklist updated"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get checklist",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Get checklist -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "let expectedChecklistName = pm.collectionVariables.get(\"checklistName\");\r",
+              "pm.test(\"Get checklist -> Checklist name is correct\", function(){\r",
+              "    pm.expect(responseData.name).to.eql(expectedChecklistName);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Get checklist -> Content type is application json\", function(){\r",
+              "   pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\") \r",
+              "});\r",
+              "\r",
+              "pm.test(\"Get checklist -> Respone has a paremeter id\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"id\");\r",
+              "});\r",
+              "\r",
+              "let checklistId = pm.collectionVariables.get(\"checklistId\");\r",
+              "pm.test(\"Get checklist -> Response's 'id' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.id).to.eql(checklistId);\r",
+              "});\r",
+              "\r",
+              "let boardId = pm.collectionVariables.get(\"boardId\");\r",
+              "pm.test(\"Get checklist -> Response's 'idBoard' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.idBoard).to.eql(boardId);\r",
+              "});\r",
+              "\r",
+              "let cardId = pm.collectionVariables.get(\"cardId\");\r",
+              "pm.test(\"Get checklist -> Response's 'idCard' parameter has a correct value\", function(){\r",
+              "    pm.expect(responseData.idCard).to.eql(cardId);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/checklists/{{checklistId}}?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "checklists",
+            "{{checklistId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete checklist",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Delete checklist -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Delete checklist -> Response's only property is 'limits' (map)\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"limits\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Delete checklist -> Response's 'limits' property is empty\", function(){\r",
+              "    pm.expect(responseData.limits).to.be.empty;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/checklists/{{checklistId}}?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "checklists",
+            "{{checklistId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete non-existent checklist",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-existent checklist -> Correct Status Code(400)\", function(){\r",
+              "    pm.response.to.have.status(400);\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/checklists/2948384adgwrg?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "checklists",
+            "2948384adgwrg"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete checklist without authorization (wrong key)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete checklist without authorization (wrong key) -> Correct Status Code(401)\", function(){\r",
+              "    pm.response.to.have.status(401);\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/checklists/2948384adgwrg?key=43253&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "checklists",
+            "2948384adgwrg"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "43253"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete checklist without authorization (wrong token)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete checklist without authorization (wrong token) -> Correct Status Code(401)\", function(){\r",
+              "    pm.response.to.have.status(401);\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/checklists/2948384adgwrg?key={{key}}&token=32ndaj3",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "checklists",
+            "2948384adgwrg"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "32ndaj3"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete card",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Delete card -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let responseData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Delete card -> Response's only property is 'limits' (map)\", function(){\r",
+              "    pm.expect(responseData).to.have.property(\"limits\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Delete card -> Response's 'limits' property is empty\", function(){\r",
+              "    pm.expect(responseData.limits).to.be.empty;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/cards/{{cardId}}?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "{{cardId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete non-existent card",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-existent card -> Correct Status Code(400)\", function(){\r",
+              "    pm.response.to.have.status(400);\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/cards/2948384adgwrg?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "2948384adgwrg"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete card without authorization (wrong key)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete card without authorization (wrong key) -> Correct Status Code(401)\", function(){\r",
+              "    pm.response.to.have.status(401);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/cards/{{cardId}}?key=4faf2&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "{{cardId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "4faf2"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete card without authorization (wrong token)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete card without authorization (wrong token) -> Correct Status Code(401)\", function(){\r",
+              "    pm.response.to.have.status(401);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/cards/{{cardId}}?key={{key}}&token=faf3r2fawg",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "{{cardId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "faf3r2fawg"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete list (currently it's archivising)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status code\r",
+              "pm.test(\"Archive list -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/lists/{{listId}}/?closed=true&key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{listId}}",
+            ""
+          ],
+          "query": [
+            {
+              "key": "closed",
+              "value": "true"
+            },
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete board",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//three things to test:\r",
+              "//1 - status code\r",
+              "//2 - response time\r",
+              "//3 - body of the response (data in json)\r",
+              "\r",
+              "//Status code\r",
+              "pm.test(\"Delete board -> Correct Status Code(200)\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/1/boards/{{boardId}}?key={{key}}&token={{token}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{boardId}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{key}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          "//Getting the request name\r",
+          "let requestName = pm.info.requestName;\r",
+          "//Response time\r",
+          "pm.test(`${requestName} -> Reasonable response time(less than 3 seconds)`, function () {\r",
+          "    pm.expect(pm.response.responseTime).to.be.below(3000);\r",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.trello.com",
+      "type": "string"
+    },
+    {
+      "key": "key",
+      "value": "HERE_API_KEY",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "HERE_API_TOKEN",
+      "type": "string"
+    },
+    {
+      "key": "boardId",
+      "value": ""
+    },
+    {
+      "key": "listId",
+      "value": ""
+    },
+    {
+      "key": "cardId",
+      "value": ""
+    },
+    {
+      "key": "checklistId",
+      "value": ""
+    },
+    {
+      "key": "organizationId",
+      "value": ""
+    },
+    {
+      "key": "boardName",
+      "value": ""
+    },
+    {
+      "key": "listName",
+      "value": ""
+    },
+    {
+      "key": "updatedBoardName",
+      "value": ""
+    },
+    {
+      "key": "updatedListName",
+      "value": ""
+    },
+    {
+      "key": "updatedCardName",
+      "value": ""
+    },
+    {
+      "key": "cardName",
+      "value": ""
+    },
+    {
+      "key": "checklistName",
+      "value": ""
+    }
+  ]
+}
