@@ -1,0 +1,85 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.AddTheEvent2.IndexModel
+@{
+    ViewData["Title"] = "Dodaj Wydarzenie Sportowe";
+}
+
+<html>
+    <head>
+        <meta charset="uft-8" />
+        <style>
+            body
+            {
+                text-align: center;
+            }
+
+            .zawody
+            {
+                margin: 20px;
+                padding: 10px;
+                border-top: solid;
+                border-bottom: solid;
+            }
+        </style>
+    </head>
+    <body>
+        @if (@Model.TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                <strong>@Model.TempData["ErrorMessage"]</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (Model.TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                <strong>@Model.TempData["SuccessMessage"]</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <h1>Kontynuuj tworzyć wydarzenie sportowe, które ty zorganizujesz!</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="text" class="form-control" asp-for="Nazwa" hidden>
+            <textarea class="form-control textarea-of-opis" rows="10" asp-for="Ogloszenie" hidden></textarea>
+            <input type="number" class="form-control" asp-for="LiczbaZawodow" hidden/>
+            @for(int i = 0; i < @Model.LiczbaZawodow; i++)
+            {
+                <div class="zawody">
+                    <h2>Zawody nr @(i+1)</h2>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 offset-sm-2 col-form-label">Dyscyplina:</label>
+                        <div class="col-sm-5">
+                            <select name="WybraneDyscyplinyZListy[@i]" asp-items='@(ViewData["mozliweDyscyplinyDoWyboru"] as SelectList)' class="input-group"></select>
+                        </div>
+                        <label class="col-sm-2 offset-sm-2 col-form-label">Nie ma dyscypliny na liście? Dodaj ją!</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" name="NazwyDyscyplinWpisanych[@i]"/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 offset-sm-2 col-form-label">Data Zawodow:</label>
+                        <div class="col-sm-5">
+                            <input type="date" class="form-control" name="Daty[@i]" />
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="logo">
+                <div class="row mb-3">
+                    <label class="col-sm-2 offset-sm-2 col-form-label">Logo wydarzenia sportowego:</label>
+                    <div class="col-sm-5">
+                        <input type="file" asp-for="Logo" class="form-control"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="offset-sm-3 col-sm-3 d-grid">
+                    <a class="btn btn-outline-primary" href="/AddTheEvent" role="button">Powrót</a>
+                </div>
+                <div class="col-sm-3 d-grid">
+                    <button type="submit" class="btn btn-primary">Stwórz wydarzenie sportowe</button>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>

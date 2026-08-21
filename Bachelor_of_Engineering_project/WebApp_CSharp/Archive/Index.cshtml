@@ -1,0 +1,100 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.ArchiveModel
+@{
+    ViewData["Title"] = "Archiwum wydarzeń sportowych";
+}
+
+<html lang="pl">
+<head>
+	<meta charset="uft-8" />
+		<style>
+			.wewnetrzny {
+				margin-top: 20px;
+				padding-top: 10px;
+				border-top: solid;
+				display: flex;
+				align-items: stretch;
+			}
+
+			.wewnetrzny:nth-child(odd) {
+					flex-direction: row;
+			}
+
+			.wewnetrzny:nth-child(even) {
+					flex-direction: row-reverse;
+			}
+
+			.content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+
+			h4 {
+				text-align: center;
+			}
+
+			img {
+				width: 40%;
+				height: auto;
+			}
+
+			.text {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: 0 20px;
+				margin-bottom: 0px;
+			}
+
+			.button-container {
+				display: flex;
+				justify-content: center;
+				margin-top: 0px;
+			}
+		</style>
+	</head>
+    <body>
+        @if (@Model.TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["SuccessMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.WydarzeniaSportowe == null || Model.WydarzeniaSportowe.Count == 0)
+		{
+			<h1>Brak archiwalnych wydarzeń sportowych!</h1>
+		}
+		else
+		{
+			<h1>Archiwalne wydarzenia sportowe:</h1>
+			<div>
+				@foreach (var wydarzenieSportowe in Model.WydarzeniaSportowe)
+				{
+					<div class="wewnetrzny">
+						<img src="/images/logos/@wydarzenieSportowe.Logo" loading="lazy" alt="Logo Wydarzenia Sportowego">
+						<div class="content">
+							<div class="text">
+								<h4>@wydarzenieSportowe.Nazwa</h4>
+								<p>@wydarzenieSportowe.Ogloszenie</p>
+							</div>
+							<div class="button-container">
+							<a asp-page="/Summarization/Index" asp-route-id="@wydarzenieSportowe.IdWydarzenieSportowe" class="btn btn-primary btn-lg">Podsumowanie wydarzenia</a>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		}
+    </body>
+</html>

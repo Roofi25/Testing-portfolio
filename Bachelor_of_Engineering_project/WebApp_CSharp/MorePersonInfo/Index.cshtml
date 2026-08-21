@@ -1,0 +1,42 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.MorePersonInfo.IndexModel
+@{
+	ViewData["Title"] = "Informacje o organizatorze";
+}
+
+<html lang="pl">
+	<head>
+		<meta charset="uft-8" />
+		<style>
+			body{
+				text-align: center;
+			}
+
+			img {
+				width: 55%;
+				height: 40%;
+				margin-top: 30px;
+			}
+
+			.grafika {
+				text-align: center;
+				align-content: center;
+				align-items: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<br />
+			<h1>Dane organizatora wydarzenia sportowego:</h1>
+			<br />
+			<h3>Imie i nazwisko: @Model.Osoba.Imie @Model.Osoba.Nazwisko</h3>
+			<h3>Adres email: @Model.Osoba.Email</h3>
+			<h3>Data urodzenia: @Model.Osoba.DataUrodzenia.ToString("dd.MM.yyyy") r.</h3>
+			<h3>Numer telefonu: @Model.Osoba.NumerTelefonu</h3>
+			<div class="grafika">
+				<img src="~/images/strona_glowna.jpg">
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,209 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.Summarization.IndexModel
+@{
+	ViewData["Title"] = "Podsumowanie Wydarzenia Sportowego";
+}
+
+<html>
+    <head>
+        <meta charset="utf-8"/>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<style>
+			.wewnetrzny {
+				margin-top: 20px;
+				padding-top: 10px;
+				border-top: solid;
+				display: flex;
+				align-items: stretch;
+			}
+
+			h4 
+			{
+				text-align: center;
+			}
+
+			.content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+
+			img {
+				width: 40%;
+				height: auto;
+			}
+
+			.text {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: 0 20px;
+				margin-bottom: 0px;
+				align-items: center;
+			}
+
+			.button-container {
+				display: flex;
+				justify-content: center;
+				margin-top: 0px;
+			}
+
+			.podsumowanie
+			{
+				margin 10px;
+				padding: 10px;
+			}
+
+			table {
+				border: solid 1px;
+				border-collapse: collapse;
+				width: 100%;
+				margin-top: 10px;
+			}
+
+			th, td {
+				border: solid 1px;
+				border-collapse: collapse;
+				height: 50px;
+				width: 200px;
+				text-align: center;
+			}
+
+			tr:hover {
+				background-color: lightgrey;
+			}
+		</style>
+    </head>
+    <body>
+		@if (@Model.TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["SuccessMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.WydarzenieSportowe.Ogloszenie == null)
+		{
+			<h1>Coś poszło nie tak!</h1>
+		}
+		<h1>@Model.WydarzenieSportowe.Nazwa</h1>
+		<div>
+			<div class="wewnetrzny">
+				<img src="/images/logos/@Model.WydarzenieSportowe.Logo" loading="lazy" alt="Logo Wydarzenia Sportowego">
+				<div class="content">
+					<div class="text">
+						@if (Model.WydarzenieSportowe == null || Model.DyscyplinyOrazDaty == null)
+						{
+							<p>Nie udało się wczytać danych danego wydarzenia!</p>
+						}
+						else
+						{
+							<h4>@Model.WydarzenieSportowe.Nazwa</h4>
+							<p>@Model.WydarzenieSportowe.Ogloszenie</p>
+							@foreach (var DyscyplinaOrazData in Model.DyscyplinyOrazDaty)
+							{
+								<p>@DyscyplinaOrazData.NazwaDyscypliny - @DyscyplinaOrazData.DataZawodow.ToString("dd.MM.yyyy") r.</p>
+							}
+							@if (Model.Organizator != null)
+							{
+								<p>Organizator: <a asp-page="/MorePersonInfo/Index" asp-route-id="@Model.Organizator.IdOsoba">@Model.Organizator.Imie @Model.Organizator.Nazwisko</a></p>
+							}
+							else
+							{
+								<p>Coś poszło nie tak podczas ustalania organizatora wydarzenia!</p>
+							}
+						}
+					</div>
+				</div>
+			</div>
+			<div class="podsumowanie">
+				<div class="funkcjePomocnikow">
+					<h3>Przypisani pomocnicy do funkcji:</h3>
+					@for (int i = 0; i < Model.PomocnicyWydarzenia.Count; i++)
+					{
+						<div class="pomocnik_oraz_funkcja">
+							<p>@Model.Funkcje.ElementAt(i).Nazwa - @Model.PomocnicyWydarzenia.ElementAt(i).Imie @Model.PomocnicyWydarzenia.ElementAt(i).Nazwisko</p>
+						</div>
+					}
+				</div>
+				<div class="obiektySportowe">
+					<h3>Przypisane obiekty sportowe do dyscyplin:</h3>
+					@for(int i = 0; i < Model.ObiektySportowe.Count; i++)
+					{
+						<div class="dyscyplina_oraz_obiekt_sportowy">
+							<p>@Model.DyscyplinyOrazDaty.ElementAt(i).NazwaDyscypliny, dnia @Model.DyscyplinyOrazDaty.ElementAt(i).DataZawodow.ToString("dd.MM.yyyy") r. - @Model.ObiektySportowe.ElementAt(i).Nazwa, @Model.ObiektySportowe.ElementAt(i).Miejscowosc, @Model.ObiektySportowe.ElementAt(i).Ulica @Model.ObiektySportowe.ElementAt(i).NumerBudynku, @Model.ObiektySportowe.ElementAt(i).KodPocztowy</p>
+						</div>
+					}
+				</div>
+				<div class="lokaleGastronomiczne">
+					<h3>Przypisane lokale gastronomiczne do dyscyplin:</h3>
+					@for(int i = 0; i < Model.LokaleGastronomiczne.Count; i++)
+					{
+						<div class="dyscyplina_oraz_lokal_gastronomiczny">
+							<p>@Model.DyscyplinyOrazDaty.ElementAt(i).NazwaDyscypliny, dnia @Model.DyscyplinyOrazDaty.ElementAt(i).DataZawodow.ToString("dd.MM.yyyy") r. - @Model.LokaleGastronomiczne.ElementAt(i).Nazwa, @Model.LokaleGastronomiczne.ElementAt(i).Miejscowosc, @Model.LokaleGastronomiczne.ElementAt(i).Ulica @Model.LokaleGastronomiczne.ElementAt(i).NumerBudynku, @Model.LokaleGastronomiczne.ElementAt(i).KodPocztowy</p>
+						</div>
+					}
+				</div>
+				<div class="sponsorzy">
+					<h3>Przypisani sponsorzy do dyscyplin:</h3>
+					@for(int i = 0; i < Model.Sponsorzy.Count; i++)
+					{
+						<div class="dyscyplina_oraz_sponsor">
+							<p>@Model.DyscyplinyOrazDaty.ElementAt(i).NazwaDyscypliny, dnia @Model.DyscyplinyOrazDaty.ElementAt(i).DataZawodow.ToString("dd.MM.yyyy") r. - @Model.Sponsorzy.ElementAt(i).Nazwa, @Model.Sponsorzy.ElementAt(i).Miejscowosc, @Model.Sponsorzy.ElementAt(i).Ulica @Model.Sponsorzy.ElementAt(i).NumerBudynku, @Model.Sponsorzy.ElementAt(i).KodPocztowy</p>
+						</div>
+					}
+				</div>
+				<div class="zawodnicyWydarzeniaSportowego">
+					<h3>Zawodnicy, którzy brali udział w tym wydarzeniu sportowym:</h3>
+					<table>
+						<thead>
+							<tr>
+								<th>Imie</th>
+								<th>Nazwisko</th>
+								<th>Data urodzenia</th>
+								<th>Adres email</th>
+								<th>Numer telefonu</th>
+								@foreach (var zawody in Model.DyscyplinyOrazDaty)
+								{
+									<th>@zawody.NazwaDyscypliny</th>
+								}
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var player in Model.Zawodnicy)
+							{
+								<tr>
+									<td>@player.Imie</td>
+									<td>@player.Nazwisko</td>
+									<td>@player.DataUrodzenia.ToString("dd.MM.yyyy") r.</td>
+									<td>@player.Email</td>
+									<td>@player.NumerTelefonu</td>
+									@for (int i = 0; i < player.CzyZapisanyNaZawody.Count; i++)
+									{
+										@if (player.CzyZapisanyNaZawody.ElementAt(i))
+										{
+											<td><i class="fas fa-check" style="color:green;"></i></td>
+										}
+										else
+										{
+											<td><i class="fas fa-times" style="color:red;"></i></td>
+										}
+									}
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+    </body>
+</html>

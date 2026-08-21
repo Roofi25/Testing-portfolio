@@ -1,0 +1,80 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.AddSportFacility.IndexModel
+@{
+    ViewData["Title"] = "Dodaj obiekt sportowy";
+}
+
+<html lang="pl">
+	<head>
+		<meta charset="uft-8" />
+		<style>
+			body {
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		@if (@Model.TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["SuccessMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		<br />
+		<h1>Dodaj obiekt sportowy, którego nie ma na liście</h1>
+		<form method="POST">
+			<br />
+			<div class="row mb-3">
+				<label class="col-sm-2 offset-sm-2 col-form-label">Nazwa:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" asp-for="Nazwa">
+					<span asp-validation-for="Nazwa" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 offset-sm-2 col-form-label">Miejscowość:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" asp-for="Miejscowosc">
+					<span asp-validation-for="Miejscowosc" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 offset-sm-2 col-form-label">Ulica:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" asp-for="Ulica">
+					<span asp-validation-for="Ulica" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 offset-sm-2 col-form-label">Numer budynku:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" asp-for="NumerBudynku">
+					<span asp-validation-for="NumerBudynku" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 offset-sm-2 col-form-label">Kod pocztowy:</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" asp-for="KodPocztowy" pattern="\d{2}-\d{3}" title="Podaj polski kod pocztowy w formacie NN-NNN">
+					<span asp-validation-for="KodPocztowy" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="offset-sm-3 col-sm-3 d-grid">
+					<a class="btn btn-outline-primary" asp-page="/HelpingTheEvent/Index" asp-route-id="@Model.WydarzenieSportowe.IdWydarzenieSportowe" role="button">Powrót</a>
+				</div>
+				<div class="col-sm-3 d-grid">
+					<button type="submit" class="btn btn-primary">Dodaj obiekt sportowy</button>
+				</div>
+			</div>
+		</form>
+	</body>
+</html>

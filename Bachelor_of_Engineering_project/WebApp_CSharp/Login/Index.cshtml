@@ -1,0 +1,59 @@
+﻿@page
+@model LoginModel
+@{
+	ViewData["Title"] = "Logowanie";
+}
+
+<head>
+	<meta charset="UTF-8">
+	<style>
+		body {
+			text-align: center;
+		}
+
+		h2 {
+			margin: 10px;
+			padding: 15px;
+		}
+	</style>
+</head>
+
+<body>
+	<br />
+	<h1>Logowanie</h1>
+
+	@if (@Model.TempData["ErrorMessage"] != null)
+	{
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			<strong>@Model.TempData["ErrorMessage"]</strong>
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	}
+
+	<form method="POST">
+		<br />
+		<h2>Dane logowania:</h2>
+		<div class="row mb-3">
+			<label class="col-sm-2 offset-sm-2 col-form-label">Login:</label>
+			<div class="col-sm-5">
+				<input type="text" class="form-control" name="login">
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label class="col-sm-2 offset-sm-2 col-form-label">Hasło:</label>
+			<div class="col-sm-5">
+				<input type="password" class="form-control" name="haslo">
+			</div>
+		</div>
+
+
+		<div class="row mb-3">
+			<div class="offset-sm-3 col-sm-3 d-grid">
+				<a class="btn btn-outline-primary" href="/" role="button">Powrót</a>
+			</div>
+			<div class="col-sm-3 d-grid">
+				<button type="submit" class="btn btn-primary">Zaloguj</button>
+			</div>
+		</div>
+	</form>
+</body>

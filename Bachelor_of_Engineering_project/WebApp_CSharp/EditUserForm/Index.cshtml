@@ -1,0 +1,89 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.EditUserForm.IndexModel
+@{
+    ViewData["Title"] = "Edytuj użytkownika";
+}
+
+<html lang="pl">
+	<head>
+		<meta charset="utf-8">
+		<style>
+			body {
+				text-align: center;
+			}
+
+			.button-container {
+				display: flex;
+				justify-content: center;
+				margin-top: 20px;
+			}
+
+			form {
+				margin-top: 15px;
+			}
+
+		</style>
+	</head>
+	<body>
+		@if (@Model.TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["SuccessMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		<br />
+		<h1>Edytuj użytkownika</h1>
+		<br />
+		<div>
+			<form method="post">
+				<input type="text" hidden name="idOsoba" value="@Model.WybranyUzytkownikDoEdycji.IdOsoba"></input>
+				<div class="row mb-3">
+					<label class="col-sm-2 offset-sm-2 col-form-label">Imię:</label>
+					<div class="col-sm-5">
+						<input type="text" class="form-control" name="imie" value="@Model.WybranyUzytkownikDoEdycji.Imie">
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 offset-sm-2 col-form-label">Nazwisko:</label>
+					<div class="col-sm-5">
+						<input type="text" class="form-control" name="nazwisko" value="@Model.WybranyUzytkownikDoEdycji.Nazwisko">
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 offset-sm-2 col-form-label">Adres email:</label>
+					<div class="col-sm-5">
+						<input type="text" class="form-control" name="email" value="@Model.WybranyUzytkownikDoEdycji.Email">
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 offset-sm-2 col-form-label">Data urodzenia:</label>
+					<div class="col-sm-5">
+						<input type="date" class="form-control" name="dataUrodzenia" value='@Model.WybranyUzytkownikDoEdycji.DataUrodzenia.ToString("yyyy-MM-dd")'>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 offset-sm-2 col-form-label">Numer telefonu:</label>
+					<div class="col-sm-5">
+						<input type="text" class="form-control" name="numerTelefonu" value="@Model.WybranyUzytkownikDoEdycji.NumerTelefonu">
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-sm-3 offset-sm-3 d-grid">
+						<a class="btn btn-outline-primary" role="button" asp-page="/AdministratorPanel/Index">Powrót</a>
+					</div>
+					<div class="col-sm-3 d-grid">
+						<button type="submit" class="btn btn-primary">Edytuj użytkownika</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

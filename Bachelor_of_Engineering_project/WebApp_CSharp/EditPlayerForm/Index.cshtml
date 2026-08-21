@@ -1,0 +1,167 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.EditPlayerForm.IndexModel
+@{
+	ViewData["Title"] = "Edytuj zawodnika";
+}
+
+<html lang="pl">
+	<head>
+		<meta charset="utf-8">
+		<style>
+			.glowny {
+				text-align: center;
+			}
+
+			.wewnetrzny {
+				margin-top: 20px;
+				padding-top: 10px;
+				border-top: solid;
+				display: flex;
+				align-items: stretch;
+			}
+
+			.content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+
+			h4 {
+				text-align: center;
+			}
+
+			img {
+				width: 40%;
+				height: auto;
+			}
+
+			.text {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: 0 20px;
+				margin-bottom: 0px;
+				align-items: center;
+			}
+
+			.button-container {
+				display: flex;
+				justify-content: center;
+				margin-top: 20px;
+			}
+
+			select {
+				margin: 7px;
+			}
+
+			form
+			{
+				margin-top: 15px;
+			}
+
+			.form-check-input
+			{
+				margin-right: 50px;
+			}
+
+		</style>
+	</head>
+	<body>
+		@if (@Model.TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["SuccessMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		<h1>@Model.WydarzenieSportowe.Nazwa</h1>
+		<div>
+			<div class="wewnetrzny">
+				<img src="/images/logos/@Model.WydarzenieSportowe.Logo" loading="lazy" alt="Logo Wydarzenia Sportowego">
+				<div class="content">
+					<div class="text">
+						@if (Model.WydarzenieSportowe == null || Model.DyscyplinyOrazDaty == null)
+						{
+							<p>Nie udało się wczytać danych danego wydarzenia!</p>
+						}
+						else
+						{
+							<h4>@Model.WydarzenieSportowe.Nazwa</h4>
+							<p>@Model.WydarzenieSportowe.Ogloszenie</p>
+							@foreach (var DyscyplinaOrazData in Model.DyscyplinyOrazDaty)
+							{
+								<p>@DyscyplinaOrazData.NazwaDyscypliny - @DyscyplinaOrazData.DataZawodow.ToString("dd.MM.yyyy") r.</p>
+							}
+							<p>Organizator: <a asp-page="/MorePersonInfo/Index" asp-route-id="@Model.Organizator.IdOsoba">@Model.Organizator.Imie @Model.Organizator.Nazwisko</a></p>
+						}
+					</div>
+				</div>
+			</div>
+			<div>
+				<form method="post">
+					<input type="text" hidden name="idOsoba" value="@Model.WybranyZawodnikDoEdycji.IdOsoba"></input>
+					<div class="row mb-3">
+						<label class="col-sm-2 offset-sm-2 col-form-label">Imię:</label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" name="imie" value="@Model.WybranyZawodnikDoEdycji.Imie">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 offset-sm-2 col-form-label">Nazwisko:</label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" name="nazwisko" value="@Model.WybranyZawodnikDoEdycji.Nazwisko">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 offset-sm-2 col-form-label">Adres email:</label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" name="email" value="@Model.WybranyZawodnikDoEdycji.Email">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 offset-sm-2 col-form-label">Data urodzenia:</label>
+						<div class="col-sm-5">
+							<input type="date" class="form-control" name="dataUrodzenia" value='@Model.WybranyZawodnikDoEdycji.DataUrodzenia.ToString("yyyy-MM-dd")'>
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 offset-sm-2 col-form-label">Numer telefonu:</label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" name="numerTelefonu" value="@Model.WybranyZawodnikDoEdycji.NumerTelefonu">
+						</div>
+					</div>
+					@for (int i = 0; i < Model.IloscDyscyplin; i++)
+					{
+						var checkboxId = "checkboxId_" + i;
+						var competitionId = Model.Zawody.ElementAt(i).IdZawody;
+						var isCheckboxCheked = Model.WybraneZawody.Contains(competitionId);
+
+						<div class="row mb-3">
+							<label class="col-sm-6 offset-sm-2" for="@checkboxId">@Model.DyscyplinyOrazDaty.ElementAt(i).NazwaDyscypliny - @Model.DyscyplinyOrazDaty.ElementAt(i).DataZawodow.ToString("dd.MM.yyyy")r.</label>
+							<div class="col-sm-2">
+								<input type="checkbox" id="@checkboxId" class="form-check-input" name="WybraneZawody" value="@competitionId" @(isCheckboxCheked ? "checked" : "") />
+							</div>
+						</div>
+					}
+					<div class="row mb-3">
+						<div class="col-sm-3 offset-sm-3 d-grid">
+							<a class="btn btn-outline-primary" role="button" asp-page="/EditPlayers/Index" asp-route-id=@HttpContext.Session.GetString("id")>Powrót</a>
+						</div>
+						<div class="col-sm-3 d-grid">
+							<button type="submit" class="btn btn-primary">Edytuj zawodnika</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

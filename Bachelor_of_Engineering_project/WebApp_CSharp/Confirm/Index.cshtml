@@ -1,0 +1,46 @@
+﻿@page
+@using System_wspomagajacy_organizacje_wydarzen_sportowych.Models.BazaDanych
+@using System_wspomagajacy_organizacje_wydarzen_sportowych.Models.Inne
+@using System.Text.Json
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.Confirm.IndexModel
+@{
+    ViewData["Title"] = "Usuń Zawodnika";
+    //pobieramy jsona z sesji
+    string json = HttpContext.Session.GetString("LoggedUser");
+    //deserializujemy jsona do obiektu o nazwie loggedUser, ktory bedzie zawierał informacje o aktualnie zalogowanym użytkowniku
+    Osoba loggedUser = JsonSerializer.Deserialize<Osoba>(json);
+}
+
+<html lang="pl">
+    <head>
+        <meta charset="utf-8">
+        <style>
+            h3
+            {
+                text-align: center;
+                margin-top: 180px;
+            }
+
+        </style>
+    </head>
+    <body>
+        @if (HttpContext.Session.GetString("akcja") == null)
+        {
+            <h3>Coś poszło nie tak!</h3>
+        }
+        else
+        {
+            <h3>Czy jesteś pewny że chcesz @HttpContext.Session.GetString("akcja") tego zawodnika z tego wydarzenia sportowego?</h3>
+            <form method="POST">
+                <div class="row mb-3">
+                    <div class="offset-sm-3 col-sm-3 d-grid">
+                        <a class="btn btn-outline-primary" role="button" asp-page="/DeletePlayers/Index" asp-route-id='@HttpContext.Session.GetInt32("idWydarzenieSportowe")'>Powrót</a>
+                    </div>
+                    <div class="col-sm-3 d-grid">
+                        <button type="submit" class="btn btn-primary">Potwierdź</button>
+                    </div>
+                </div>
+            </form>
+        }
+    </body>
+</html>

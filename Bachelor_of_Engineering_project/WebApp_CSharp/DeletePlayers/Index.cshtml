@@ -1,0 +1,161 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.DeletePlayers.IndexModel
+@{
+	ViewData["Title"] = "Usuń zawodników";
+}
+
+<html lang="pl">
+	<head>
+		<meta charset="utf-8">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<style>
+			.glowny {
+				text-align: center;
+			}
+
+			.wewnetrzny {
+				margin-top: 20px;
+				padding-top: 10px;
+				border-top: solid;
+				display: flex;
+				align-items: stretch;
+			}
+
+			.content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+
+			h4{
+				text-align: center;
+			}
+
+			img {
+				width: 40%;
+				height: auto;
+			}
+
+			.text {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: 0 20px;
+				margin-bottom: 0px;
+				align-items: center;
+			}
+
+			.button-container {
+				display: flex;
+				justify-content: center;
+				margin-top: 0px;
+			}
+
+			table {
+				border: solid 1px;
+				border-collapse: collapse;
+				width: 100%;
+				margin-top: 10px;
+			}
+
+			th, td {
+				border: solid 1px;
+				border-collapse: collapse;
+				height: 50px;
+				width: 200px;
+				text-align: center;
+			}
+
+			tr:hover {
+				background-color: lightgrey;
+			}
+		</style>
+	</head>
+	<body>
+		@if (@Model.TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["SuccessMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		<h1>@Model.WydarzenieSportowe.Nazwa</h1>
+		<div>
+			<div class="wewnetrzny">
+				<img src="/images/logos/@Model.WydarzenieSportowe.Logo" loading="lazy" alt="Logo Wydarzenia Sportowego">
+				<div class="content">
+					<div class="text">
+						@if (Model.WydarzenieSportowe == null || Model.DyscyplinyOrazDaty == null)
+						{
+							<p>Nie udało się wczytać danych danego wydarzenia!</p>
+						}
+						else
+						{
+							<h4>@Model.WydarzenieSportowe.Nazwa</h4>
+							<p>@Model.WydarzenieSportowe.Ogloszenie</p>
+							@foreach (var DyscyplinaOrazData in Model.DyscyplinyOrazDaty)
+							{
+								<p>@DyscyplinaOrazData.NazwaDyscypliny - @DyscyplinaOrazData.DataZawodow.ToString("dd.MM.yyyy") r.</p>
+							}
+							<p>Organizator: <a asp-page="/MorePersonInfo/Index" asp-route-id="@Model.Organizator.IdOsoba">@Model.Organizator.Imie @Model.Organizator.Nazwisko</a></p>
+						}
+					</div>
+				</div>
+			</div>
+			<div class="table">
+				<table>
+					<thead>
+						<tr>
+							<th>Imię</th>
+							<th>Nazwisko</th>
+							<th>Data urodzenia</th>
+							<th>Adres email</th>
+							<th>Numer telefonu</th>
+							@foreach(var zawody in Model.DyscyplinyOrazDaty)
+							{
+								<th>@zawody.NazwaDyscypliny</th>
+							}
+							<th>Akcja</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach(var player in Model.ZawodnicyDoWyswietlenia)
+						{
+							<tr>
+								<td>@player.Imie</td>
+								<td>@player.Nazwisko</td>
+								<td>@player.DataUrodzenia.ToString("dd.MM.yyyy") r.</td>
+								<td>@player.Email</td>
+								<td>@player.NumerTelefonu</td>
+								@for(int i = 0; i < player.CzyZapisanyNaZawody.Count; i++)
+								{
+									@if(player.CzyZapisanyNaZawody.ElementAt(i))
+									{
+										<td><i class="fas fa-check" style="color:green;"></i></td>
+									}
+									else
+									{
+										<td><i class="fas fa-times" style="color:red;"></i></td>
+									}
+								}
+								<td><a class="btn btn-primary" role="button" asp-page="/Confirm/Index" asp-route-id="@player.IdOsoba">Usuń</a></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+			<div style="text-align: center;">
+				<a style=" padding: 5px 5px; width: 300px;" class="btn btn-outline-primary" role="button" asp-page="/HelpingTheEvent/Index" asp-route-id="@Model.WydarzenieSportowe.IdWydarzenieSportowe">Powrót</a>
+			</div>
+		</div>
+	</body>
+</html>

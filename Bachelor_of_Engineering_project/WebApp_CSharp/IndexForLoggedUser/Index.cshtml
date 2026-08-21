@@ -1,0 +1,83 @@
+﻿@page
+@using System.Text.Json
+@using System_wspomagajacy_organizacje_wydarzen_sportowych.Models.BazaDanych;
+@using System_wspomagajacy_organizacje_wydarzen_sportowych.Models.Inne;
+@model IndexForLoggedUserModel
+@{
+	//pobieramy jsona z sesji
+	string json = HttpContext.Session.GetString("LoggedUser");
+	//deserializujemy jsona do obiektu o nazwie loggedUser, ktory bedzie zawierał informacje o aktualnie zalogowanym użytkowniku
+	Osoba loggedUser = JsonSerializer.Deserialize<Osoba>(json);
+}
+
+<html>
+
+<head>
+	<style>
+		h3, h4
+		{
+			text-align: center;
+			padding: 10px;
+			margin: 10px;
+			font-size: 30px
+		}
+
+		.text-center 
+		{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+		}
+
+		img 
+		{
+			width: 55%;
+			height: 40%;
+			margin-top: 30px;
+		}
+
+		.grafika
+		{
+			text-align: center;
+			align-content: center;
+			align-items: center;
+		}
+
+		.button-container
+		{
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<!--
+	<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+		<ul class="navbar-nav flex-grow-1">
+			<li class="nav-item">
+				<a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+		</li>
+	</div>
+	-->
+	@if (!string.IsNullOrEmpty(Model.successMessage))
+	{
+		<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+			<strong>@Model.successMessage</strong>
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	}
+	<br />
+	<div>
+		<h3>Witaj @loggedUser.Imie</h3>
+		<h4>Proszę wybrać opcję z powyższego menu kontekstowego lub stworzyć swoje wydarzenie sportowe!</h4>
+		<div class="button-container">
+			<a asp-page="/AddTheEvent/Index">
+				<button class="btn btn-primary btn-lg">Stwórz wydarzenie sportowe!</button>
+			</a>
+		</div>
+		<div class="grafika">
+			<img src="~/images/strona_glowna.jpg">
+		</div>
+	</div>
+</body>
+</html>

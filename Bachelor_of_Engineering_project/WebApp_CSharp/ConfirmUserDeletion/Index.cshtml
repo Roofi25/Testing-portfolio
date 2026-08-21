@@ -1,0 +1,31 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.ConfirmUserDeletion.IndexModel
+@{
+    ViewData["Title"] = "Usuń użytkownika";
+}
+
+<html lang="pl">
+    <head>
+        <meta charset="utf-8">
+        <style>
+            h3 {
+                text-align: center;
+                margin-top: 180px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <h3>Czy jesteś pewny że chcesz usunąć tego użytkownika z systemu?</h3>
+        <form method="POST">
+            <div class="row mb-3">
+                <div class="offset-sm-3 col-sm-3 d-grid">
+                    <a class="btn btn-outline-primary" role="button" asp-page="/AdministratorPanel/Index">Powrót</a>
+                </div>
+                <div class="col-sm-3 d-grid">
+                    <button type="submit" class="btn btn-primary">Potwierdź</button>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>

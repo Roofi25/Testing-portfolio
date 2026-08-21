@@ -1,0 +1,83 @@
+﻿@page
+@model System_wspomagajacy_organizacje_wydarzen_sportowych.Pages.AdministratorPanel.IndexModel
+@{
+    ViewData["Title"] = "Panel administratora";
+}
+
+<html lang="pl">
+	<head>
+		<meta charset="uft-8" />
+		<style>
+			body {
+				text-align: center;
+			}
+
+			table {
+				border: solid 1px;
+				border-collapse: collapse;
+				width: 100%;
+				margin-top: 10px;
+			}
+
+			th, td {
+				border: solid 1px;
+				border-collapse: collapse;
+				height: 50px;
+				width: 200px;
+				text-align: center;
+			}
+
+			tr:hover {
+				background-color: lightgrey;
+			}
+		</style>
+	</head>
+	<body>
+		@if (@Model.TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["ErrorMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		@if (Model.TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				<strong>@Model.TempData["SuccessMessage"]</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		}
+		<br />
+		<h1>Zarządzaj użytkownikami w systemie</h1>
+		<br />
+		<div class="table">
+			<table>
+				<thead>
+					<tr>
+						<th>Imię</th>
+						<th>Nazwisko</th>
+						<th>Data urodzenia</th>
+						<th>Adres email</th>
+						<th>Numer telefonu</th>
+						<th>Edytuj</th>
+						<th>Usuń</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var uzytkownik in Model.UzytkownicyDoWyswietlenia)
+					{
+						<tr>
+							<td>@uzytkownik.Imie</td>
+							<td>@uzytkownik.Nazwisko</td>
+							<td>@uzytkownik.DataUrodzenia.ToString("dd.MM.yyyy") r.</td>
+							<td>@uzytkownik.Email</td>
+							<td>@uzytkownik.NumerTelefonu</td>
+							<td><a class="btn btn-primary" role="button" asp-page="/EditUserForm/Index" asp-route-id="@uzytkownik.IdOsoba">Edytuj</a></td>
+							<td><a class="btn btn-primary" role="button" asp-page="/ConfirmUserDeletion/Index" asp-route-id="@uzytkownik.IdOsoba">Usuń</a></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>
