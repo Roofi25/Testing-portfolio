@@ -12,6 +12,7 @@ I am a Master's graduate in Computer Science with experience in crowdtesting. I 
 ### 2. Test Automation (`Test_automation`)
 * **Content:** Automation projects written using **Selenium** (Java, TestNG framework) and **Playwright** (JavaScript).
 * **Goal:** Utilizing locators (CSS, XPath, ID), assertions, and proper test code structuring and grouping.
+* **Note:** The SwagLabsPOM folder has scripts utilizing the Page Object Model (POM) architecture.
 
 ### 3. API Testing (`API_testing`)
 * **Content:** Postman collection created for testing the Trello API.
