@@ -7,7 +7,7 @@ exports.LoginPage = class LoginPage
         this.usernameInput = page.locator('#user-name');
         this.passwordInput = page.locator('#password');
         this.loginButton = page.locator('#login-button');
-        this.loginErrorMessage = page.locator('[data-test="error"]')
+        this.errorMessage = page.locator('[data-test="error"]')
     }
 
     // Thanks to the Playwright Auto-waiting feature, there is no need for explicit waits
