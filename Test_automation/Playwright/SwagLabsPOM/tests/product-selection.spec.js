@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
+import { InventoryItemPage } from '../pages/InventoryItemPage';
 
 test.describe("Product Selection", () => {
     test.beforeEach(async ({ page }) => {
@@ -33,5 +34,18 @@ test.describe("Product Selection", () => {
         // All of the test runs are starting from a clean state so we know that after adding and removing an item from the cart, the cart item count will be 0
         // so we are asserting the lack of cart item counter (the badge with the number of items in the cart should not be visible)
         await expect(inventoryPage.cartItemCounter).toBeHidden();
+    })
+
+    test('[SLT-8] Verify that customer is able to add product to the cart directly from the corresponding product detail page', async ({ page }) => {
+        await page.goto('/inventory-item.html?id=4');
+
+        const inventoryItemPage = new InventoryItemPage(page);
+        const isItemCounterVisible = await inventoryItemPage.cartItemCounter.isVisible();
+        const initialItemCount = isItemCounterVisible ? parseInt(await inventoryItemPage.cartItemCounter.innerText(), 10) : 0;
+        await inventoryItemPage.addProductToCart();
+        const expectedItemCount = (initialItemCount + 1).toString();
+
+        await expect(inventoryItemPage.removeFromCartButton).toHaveText('Remove');
+        await expect(inventoryItemPage.cartItemCounter).toHaveText(expectedItemCount);
     })
 })
