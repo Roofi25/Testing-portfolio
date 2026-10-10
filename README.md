@@ -16,7 +16,7 @@ I am a Master's graduate in Computer Science with experience in crowdtesting. I 
 * **Note 2:** I am currently working on SwagLabsPOM project in which I am creating user stories and their acceptance criteria in Jira, test cases in Qase linked to these user stories and I also automate these test cases in Playwright. You can see below the example of my work (Jira + Qase + Playwright).
 
 <details>
-  <summary><b>Click to expand: Jira & Qase & Playwright workflow example</b></summary>
+  <summary><b>Click to expand: Jira + Qase + Playwright workflow example</b></summary>
   <br>
   **Jira - Fragment of the Product Selection user story**
   <img width="877" height="486" alt="image" src="https://github.com/user-attachments/assets/dbc14139-6724-49f0-93c0-df836e73cc13" />
