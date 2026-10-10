@@ -17,4 +17,9 @@ exports.InventoryItemPage = class InventoryItemPage
         await this.addToCartButton.click();
     }
 
+    async removeProductFromCart()
+    {
+        await this.removeFromCartButton.click();
+    }
+
 }
