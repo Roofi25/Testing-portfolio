@@ -17,12 +17,14 @@ I am a Master's graduate in Computer Science with experience in crowdtesting. I 
 
 <details>
   <summary><b>Click to expand: Jira + Qase + Playwright workflow example</b></summary>
+  <br>
+  
   **Jira - Fragment of the Product Selection user story**
   <img width="877" height="486" alt="image" src="https://github.com/user-attachments/assets/dbc14139-6724-49f0-93c0-df836e73cc13" />
-  
+  <br>
   **Qase - Fragment of the test case that covers one of its acceptance criteria**
   <img width="525" height="733" alt="image" src="https://github.com/user-attachments/assets/7d05b15b-1db1-457d-94eb-1c0c7541c4e6" />
-
+  <br>
   **Playwright - Fragment of the code of the automated test case**
   <img width="1049" height="335" alt="image" src="https://github.com/user-attachments/assets/389f23fb-5d71-444b-8ea9-a18c36f7689a" />
 </details>
