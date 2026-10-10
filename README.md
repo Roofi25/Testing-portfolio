@@ -17,7 +17,7 @@ I am a Master's graduate in Computer Science with experience in crowdtesting. I 
 
 <details>
   <summary><b>Click to expand: Jira + Qase + Playwright workflow example</b></summary>
-  <br><br>
+  <br>
   
   **Jira - Fragment of the Product Selection user story**
   <img width="877" height="486" alt="image" src="https://github.com/user-attachments/assets/dbc14139-6724-49f0-93c0-df836e73cc13" />
