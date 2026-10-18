@@ -74,6 +74,20 @@ test.describe("Product Selection", () => {
         await expect(page).toHaveURL('https://www.saucedemo.com/inventory-item.html?id=4');
 
         const inventoryItemPage = new InventoryItemPage(page);
-        await expect(inventoryItemPage.removeFromCartButton).toHaveText("Remove");
+        await expect(inventoryItemPage.removeFromCartButton).toHaveText('Remove');
+    })
+
+    test('[SLT-11] Verify that the state synchronization is correct between product detail page and product listing page', async({ page }) => {
+        const inventoryPage = new InventoryPage(page);
+        inventoryPage.addProductToCart();
+
+        await page.goto('/inventory-item.html?id=4');
+        const inventoryItemPage = new InventoryItemPage(page);
+        await inventoryItemPage.removeProductFromCart();
+
+        await inventoryItemPage.clickOnTheBackToProductsButton();
+
+        await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
+        await expect(inventoryPage.addToCartButton).toHaveText('Add to cart');
     })
 })

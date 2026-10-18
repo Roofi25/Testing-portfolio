@@ -10,6 +10,7 @@ exports.InventoryItemPage = class InventoryItemPage
         this.addToCartButton = page.locator('#add-to-cart');
         this.removeFromCartButton = page.locator('#remove');
         this.cartItemCounter = page.locator('[data-test="shopping-cart-badge"]');
+        this.backToProductsButton = page.locator('[data-test="back-to-products"]');
     }
 
     async addProductToCart()
@@ -22,4 +23,8 @@ exports.InventoryItemPage = class InventoryItemPage
         await this.removeFromCartButton.click();
     }
 
+    async clickOnTheBackToProductsButton()
+    {
+        await this.backToProductsButton.click();
+    }
 }
