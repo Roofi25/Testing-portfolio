@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
-import { InventoryPage } from '../pages/InventoryPage';
+import { ProductListingPage } from '../pages/ProductListingPage';
 
 test.describe("Login", () => {
 
@@ -18,8 +18,8 @@ test.describe("Login", () => {
             const loginPage = new LoginPage(page);
             await loginPage.login(username, 'secret_sauce');
 
-            const inventoryPage = new InventoryPage(page);
-            await expect(inventoryPage.cartLink, 'Cart link is not visible!').toBeVisible();
+            const productListingPage = new ProductListingPage(page);
+            await expect(productListingPage.cartLink, 'Cart link is not visible!').toBeVisible();
         })
     }
 

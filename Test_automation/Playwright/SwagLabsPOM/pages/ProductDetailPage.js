@@ -1,4 +1,4 @@
-exports.InventoryItemPage = class InventoryItemPage
+exports.ProductDetailPage = class ProductDetailPage
 {
     constructor(page)
     {
