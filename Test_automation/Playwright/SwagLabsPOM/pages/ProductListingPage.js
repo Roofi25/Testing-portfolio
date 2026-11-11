@@ -11,6 +11,9 @@ exports.ProductListingPage = class ProductListingPage
         this.cartItemCounter = page.locator('[data-test="shopping-cart-badge"]');
         this.itemImage = page.locator('[data-test="inventory-item-sauce-labs-backpack-img"]');
         this.itemName = page.locator('#item_4_title_link');
+        this.itemCard = page.locator('.inventory_item').filter({hasText: "Sauce Labs Backpack"});
+        this.itemDescription = this.itemCard.locator('[data-test="inventory-item-desc"]');
+        this.itemPrice = this.itemCard.locator('[data-test="inventory-item-price"]');
     }
 
     // Thanks to the Playwright Auto-waiting feature, there is no need for explicit waits
